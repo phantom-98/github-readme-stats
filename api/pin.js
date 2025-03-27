@@ -25,6 +25,7 @@ export default async (req, res) => {
     border_radius,
     border_color,
     description_lines_count,
+    raw_cache
   } = req.query;
 
   res.setHeader("Content-Type", "image/svg+xml");
@@ -67,7 +68,7 @@ export default async (req, res) => {
 
     res.setHeader(
       "Cache-Control",
-      `max-age=${cacheSeconds}, s-maxage=${cacheSeconds}`,
+      raw_cache ? raw_cache : `max-age=${cacheSeconds}, s-maxage=${cacheSeconds}`,
     );
 
     return res.send(
@@ -88,7 +89,7 @@ export default async (req, res) => {
   } catch (err) {
     res.setHeader(
       "Cache-Control",
-      `max-age=${CONSTANTS.ERROR_CACHE_SECONDS / 2}, s-maxage=${
+      raw_cache ? raw_cache : `max-age=${CONSTANTS.ERROR_CACHE_SECONDS / 2}, s-maxage=${
         CONSTANTS.ERROR_CACHE_SECONDS
       }, stale-while-revalidate=${CONSTANTS.ONE_DAY}`,
     ); // Use lower cache period for errors.
